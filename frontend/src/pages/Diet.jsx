@@ -5,6 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import RecipeCard from '../components/RecipeCard';
 import { useParams } from 'react-router-dom';
 import Mainnav from '../components/MainNav';
+import axios from 'axios';
 
 const categoryImages = [
     { name: 'Main Course', image: 'https://st2.depositphotos.com/3210553/9823/i/450/depositphotos_98232150-stock-photo-pan-fried-salmon-with-tender.jpg' },
@@ -36,15 +37,14 @@ const Diet = () => {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await fetch(
-          `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&diet=${dietType}&number=10&addRecipeInformation=true`
+        const response = await axios.get(
+          `https://api.spoonacular.com/recipes/complexSearch?apiKey=${import.meta.env.VITE_SPOONACULAR_API_KEY}&diet=${dietType}&number=10&addRecipeInformation=true`
         );
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch recipes');
-        }
 
-        const data = await response.json();
+
+        const data = response.data
+        
         const shuffledRecipes = shuffleArray(data.results);
         setRecipes(shuffledRecipes);
       } catch (error) {
@@ -53,15 +53,16 @@ const Diet = () => {
     };
 
     fetchRecipes();
-  }, [apiKey, dietType]);
+  }, [ dietType]);
 
   const handleCategoryClick = async (category) => {
     try {
-      const response = await fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&diet=${dietType}&number=1&addRecipeInformation=true&type=${category.toLowerCase()}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch recipes for ${category}`);
-      }
-      const data = await response.json();
+      
+      const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${import.meta.env.VITE_SPOONACULAR_API_KEY}&diet=${dietType}&number=1&addRecipeInformation=true&type=${category.toLowerCase()}`);
+     
+      const data = response.data ;     
+      
+      
       setRecipes(data.results);
     } catch (error) {
       console.error('Error fetching category recipes:', error);

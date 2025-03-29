@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/user';
 
 import LogoutModal from './LogoutModal'; 
 const Mainnav = () => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const {user} = useAuth();
 
-  useEffect(() => {
-    const userLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(userLoggedIn);
-  }, []);
+  console.log(user);
+  
+
+ 
 
   const handleLogin = () => navigate('/Login');
   const handleSignup = () => navigate('/Signup');
@@ -29,7 +30,7 @@ const Mainnav = () => {
   };
 
   const handlePantryLinkClick = (e) => {
-    if (!isLoggedIn) {
+    if (!user) {
       e.preventDefault();
       navigate('/login');
     }
@@ -63,7 +64,7 @@ const Mainnav = () => {
               Diet Plans
             </Link>
 
-            {isLoggedIn ? (
+            {user ? (
               <div className="relative">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -165,7 +166,7 @@ const Mainnav = () => {
             >
               Diet Plans
             </Link>
-            {isLoggedIn ? (
+            {user ? (
               <>
                 <button
                   onClick={handleDashboardClick}

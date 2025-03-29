@@ -28,10 +28,11 @@ const Explore = () => {
     fetchRandomRecipes();
   }, []);
 
+
   const fetchRandomRecipes = async () => {
     try {
       const response = await fetch(
-        `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}&number=10&addRecipeInformation=true`
+        `https://api.spoonacular.com/recipes/random?apiKey=${import.meta.env.VITE_SPOONACULAR_API_KEY}&number=10&addRecipeInformation=true`
       );
       if (!response.ok) throw new Error('Failed to fetch random recipes');
       const data = await response.json();
@@ -44,7 +45,7 @@ const Explore = () => {
   const handleCategoryClick = async (category) => {
     try {
       const response = await fetch(
-        `https://api.spoonacular.com/recipes/complexSearch?apiKey=${apiKey}&number=15&addRecipeInformation=true&type=${category.toLowerCase().replace(/\s+/g, '-')}`
+        `https://api.spoonacular.com/recipes/complexSearch?apiKey==${import.meta.env.VITE_SPOONACULAR_API_KEY}&number=15&addRecipeInformation=true&type=${category.toLowerCase().replace(/\s+/g, '-')}`
       );
       if (!response.ok) throw new Error(`Failed to fetch recipes for ${category}`);
       const data = await response.json();
@@ -58,7 +59,7 @@ const Explore = () => {
     setQuery(value);
     try {
       const response = await fetch(
-        `https://api.spoonacular.com/recipes/complexSearch?query=${value}&apiKey=${apiKey}&addRecipeInformation=true&number=20`
+        `https://api.spoonacular.com/recipes/complexSearch?query=${value}&apiKey=${import.meta.env.VITE_SPOONACULAR_API_KEY}&addRecipeInformation=true&number=20`
       );
       if (!response.ok) throw new Error('Failed to fetch recipes');
       const data = await response.json();

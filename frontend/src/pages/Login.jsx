@@ -1,11 +1,34 @@
-import React from 'react';
-import { Link } from 'react-router';
-
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // ✅ Fixed incorrect import
+import axios from "axios";
 const Login = () => {
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState(""); // ✅ State for email
+  const [password, setPassword] = useState(""); // ✅ State for password
+  const [message, setMessage] = useState(""); // ✅ State for messages
+  const navigate = useNavigate(); // ✅ Initialize useNavigate
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log('Form submitted');
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:5000/login",
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+      
+
+      localStorage.setItem("auth_token", response.data.token); // Store JWT
+
+      setMessage(response.data.message); // ✅ Show success message
+      navigate("/");
+    } catch (error) {
+      setMessage("Login failed. Try again."); // ✅ Handle errors
+      console.error(error);
+    }
   };
 
   return (
@@ -16,6 +39,9 @@ const Login = () => {
           <h1 className="text-3xl text-orange-400 font-bold">Culinary Tales</h1>
           <p className="text-gray-600">Sign in to explore delicious stories</p>
         </div>
+
+        {/* Display Message */}
+        {message && <p className="text-center text-red-500">{message}</p>}
 
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
@@ -31,6 +57,8 @@ const Login = () => {
               type="email"
               id="email"
               placeholder="Enter your email"
+              value={email} // ✅ Controlled input
+              onChange={(e) => setEmail(e.target.value)} // ✅ Update state
               required
             />
           </div>
@@ -47,25 +75,10 @@ const Login = () => {
               type="password"
               id="password"
               placeholder="Enter your password"
+              value={password} // ✅ Controlled input
+              onChange={(e) => setPassword(e.target.value)} // ✅ Update state
               required
             />
-          </div>
-
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="remember"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember" className="ml-2 text-sm text-gray-600">
-                Remember me
-              </label>
-            </div>
-            <a href="#" className="text-sm text-blue-600 hover:underline">
-              Forgot Password?
-            </a>
           </div>
 
           {/* Submit Button */}
@@ -79,8 +92,10 @@ const Login = () => {
 
         {/* Sign Up Link */}
         <p className="text-center text-sm text-gray-600 mt-4">
-          Don't have an account?{' '}
-          <Link to = '/signup'> Signup </Link>
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-600 hover:underline">
+            Signup
+          </Link>
         </p>
       </div>
     </div>

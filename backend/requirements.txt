@@ -1,0 +1,7 @@
+Flask==2.3.3
+Flask-MySQLdb==1.0.1
+Flask-Bcrypt==1.0.1
+Flask-Login~=0.6.3
+flask-cors~=5.0.1
+
+PyJWT~=2.10.1
