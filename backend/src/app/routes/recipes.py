@@ -1,8 +1,6 @@
 from flask import Blueprint, request, jsonify, session
 from app.models import get_favorite_recipes, get_history_recipes, store_recipe, like_recipe, dislike_recipe
-
 favorites_bp = Blueprint('favorites', __name__)
-
 
 @favorites_bp.route('/api/favorite-recipes', methods=['POST'])
 def favorite_recipes():
