@@ -17,12 +17,15 @@ def create_app():
 
 
 
+
+
     # Initialize extensions and register routes
     CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     init_extensions(app)
     app.register_blueprint(users_bp)
     app.register_blueprint(favorites_bp)
+
 
 
     return app

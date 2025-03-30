@@ -15,7 +15,7 @@ def favorite_recipes():
             return jsonify({'error': 'User ID is required'}), 400
 
         favorite_recipes = get_favorite_recipes(user_id)
-        return jsonify({'favorite_recipes': favorite_recipes}), 200
+        return jsonify({'favourite_recipes': favorite_recipes}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -36,7 +36,7 @@ def history_recipes():
         return jsonify({'error': str(e)}), 500
 
 
-@favorites_bp.route('/store-recipe', methods=['POST'])
+@favorites_bp.route('/store_recipe', methods=['POST'])
 def store_recipe_access():
     """API to store a recipe access record in history."""
     try:
@@ -51,6 +51,7 @@ def store_recipe_access():
         return jsonify(response), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @favorites_bp.route('/like_recipe', methods=['POST'])
 def like_recipe_route():

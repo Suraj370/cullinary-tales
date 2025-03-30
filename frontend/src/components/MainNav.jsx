@@ -9,7 +9,6 @@ const Mainnav = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const {user} = useAuth();
 
-  console.log(user);
   
 
  

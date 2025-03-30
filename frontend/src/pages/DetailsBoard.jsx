@@ -23,21 +23,15 @@ const DetailsBoard = () => {
   const handlePersonalInfoClick = () => {
     setSelectedOption("personalInfo");
   };
+  const fetchRecipeDetails = async (recipeIds) => {
+    if (!recipeIds || recipeIds.length === 0) {
+      console.warn("No recipe IDs provided. Skipping recipe fetch.");
+      return []; // Return an empty array to maintain consistency in the return type
+    }
 
-  const handleUserFavoritesClick = async () => {
-    setSelectedOption("userFavorites");
     try {
-      
-      console.log(user);
-      const response = await axios.post(
-        "http://localhost:5000/api/favorite-recipes",
-        {
-          user_id: user.id,
-        }
-      );
-      console.log(response.data);
-      
-      const recipeIds = response.data.favourite_recipes;
+      console.log(recipeIds);
+
       const promises = recipeIds.map((id) =>
         axios.get(
           `https://api.spoonacular.com/recipes/${id}/information?apiKey=${
@@ -46,32 +40,69 @@ const DetailsBoard = () => {
         )
       );
       const recipeDetails = await Promise.all(promises);
-      setFavoriteRecipes(recipeDetails.map((res) => res.data));
+      return recipeDetails.map((res) => res.data);
     } catch (error) {
-      console.error("Error fetching favorite recipes:", error);
+      console.error("Error fetching recipe details:", error);
+      throw new Error("Unable to fetch recipe details.");
+    }
+  };
+
+  const handleUserFavoritesClick = async () => {
+    setSelectedOption("userFavorites");
+    try {
+      console.log(user);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/favorite-recipes`,
+        {
+          user_id: user.id,
+        }
+      );
+
+      if (response.status === 200) {
+        const recipeIds = response.data.favourite_recipes;
+        const favoriteRecipes = await fetchRecipeDetails(recipeIds);
+        setFavoriteRecipes(favoriteRecipes);
+      } else {
+        console.error("Failed to fetch favorite recipes:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching favorite recipes:", error.message || error);
+    }
+  };
+
+  const fetchHistoryRecipeDetails = async (historyRecipes) => {
+    try {
+      const promises = historyRecipes.map(async (recipe) => {
+        const recipeDetail = await axios.get(
+          `https://api.spoonacular.com/recipes/${recipe.recipe_id}/information?apiKey=${import.meta.env.VITE_SPOONACULAR_API_KEY}`
+        );
+        return { ...recipeDetail.data, date_of_access: recipe.date_of_access };
+      });
+      return await Promise.all(promises);
+    } catch (error) {
+      console.error("Error fetching history recipe details:", error);
+      throw new Error("Unable to fetch history recipe details.");
     }
   };
 
   const handleHistoryClick = async () => {
     setSelectedOption("history");
     try {
-      const response = await axios.post("http://localhost:5000/api/history", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/history`, {
         user_id: user.id,
       });
-      const historyRecipes = response.data.history;
-      console.log(response.data);
-      
-      
-      const promises = historyRecipes.map(async (recipe) => {
-        const recipeDetail = await axios.get(
-          `https://api.spoonacular.com/recipes/${recipe.recipe_id}/information?apiKey=40e34375ddaa4e3abdc1e21fa4aabd61`
+
+      if (response.status === 200) {
+        const historyRecipes = response.data.history;
+        const historyRecipeDetails = await fetchHistoryRecipeDetails(
+          historyRecipes
         );
-        return { ...recipeDetail.data, date_of_access: recipe.date_of_access };
-      });
-      const recipeDetailsWithDate = await Promise.all(promises);
-      setHistoryRecipes(recipeDetailsWithDate);
+        setHistoryRecipes(historyRecipeDetails);
+      } else {
+        console.error("Failed to fetch history recipes:", response.statusText);
+      }
     } catch (error) {
-      console.error("Error fetching history recipes:", error);
+      console.error("Error fetching history recipes:", error.message || error);
     }
   };
 

@@ -14,12 +14,15 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = request.cookies.get("auth_token")
         if not token:
+
             auth_header = request.headers.get("Authorization")
             if auth_header and auth_header.startswith("Bearer "):
                 token = auth_header.split(" ")[1]  # Extract token after "Bearer "
 
         if not token:
             return jsonify({"error": "Unauthorized"}), 401  # No token
+
+        print(token)
 
         try:
             data = pyjwt.decode(token, Config.SECRET_KEY, algorithms=["HS256"])
@@ -74,7 +77,7 @@ def login():
         if user and bcrypt.check_password_hash(user['password'], password):
             user_obj = User(user['id'], user['email'])
             token = pyjwt.encode(
-                {"user_id": user_obj.id, "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)},
+                {"user_id": user_obj.id, "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)},
                 Config.SECRET_KEY,
                 algorithm="HS256"
             )
@@ -100,22 +103,13 @@ def login():
         return jsonify({"error": "Server error"}), 500
 
 
-@users_bp.route('/dashboard', methods=['GET'])
-@token_required
-def dashboard(user):
-    return jsonify({
-        "message": "Welcome to the dashboard",
-        "user": {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email
-        }
-    }), 200
+
 
 @users_bp.route('/user', methods=['GET'])
 @token_required
 def get_user(user):
     """Return authenticated user info"""
+    print(user.email)
     user  = get_user_by_email(user.email)
 
     return jsonify({"user": {"id": user['id'], "email": user['email']}}), 200

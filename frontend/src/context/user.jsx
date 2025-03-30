@@ -13,7 +13,8 @@ export const AuthProvider = ({ children }) => {
   // Fetch user on page load (persist authentication)
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
-    
+        
+        
   
     if (token) {
       axios.get("http://127.0.0.1:5000/user", {

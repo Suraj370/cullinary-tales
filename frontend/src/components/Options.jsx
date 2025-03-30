@@ -1,9 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowRight } from "react-icons/fi";
+import { useAuth } from '../context/user';
+
 
 const Options = () => {
   const navigate = useNavigate();
+    const {user} = useAuth();
+  
+
 
   const handleDietPlansClick = () => {
     navigate('/diet');
@@ -14,8 +19,7 @@ const Options = () => {
   };
 
   const handlePantrySpecificsClick = () => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
+    if (user) {
       navigate('/pantry');
     } else {
       navigate('/login');

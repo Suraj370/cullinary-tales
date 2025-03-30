@@ -1,55 +1,68 @@
 import React, { useState } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../context/user';
 
 const RecipeCard = ({ id, image, heading, servings, cuisines, recipeURL }) => {
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const {user} = useAuth();
+  
 
   const handleViewRecipeClick = () => {
-    window.open(recipeURL);
+    // window.open(recipeURL);
     const user_id = localStorage.getItem('user_id');
-    const data = { user_id, recipe_id: id };
-    const url = 'http://localhost:5000/store_recipe';
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error:', error));
-  };
+    const data = { user_id: user.id, recipe_id: id };
+    const url = `${import.meta.env.VITE_BACKEND_URL}/store_recipe`;
 
+  
+    axios.post(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true, // This ensures credentials are sent with the request
+    })
+    .then(response => console.log(response.data))
+    .catch(error => console.error('Error:', error));
+  };
+  
   const handleLikeClick = () => {
     if (!loading) {
-      setLoading(true);
-      const user_id = localStorage.getItem('user_id');
-      if (!user_id) {
+      setLoading(true); // Set loading to true to prevent multiple clicks
+  
+
+      console.log(id);
+
+      
+      if (!user.id) {
         navigate('/login');
+        setLoading(false); // Make sure to reset loading state when redirecting
         return;
       }
-      const data = { user_id, recipe_id: id };
-      const url = liked ? 'http://localhost:5000/dislike_recipe' : 'http://localhost:5000/like_recipe';
-      fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+  
+      const data = { user_id: user.id, recipe_id: id };
+      const url = liked ? `${import.meta.env.VITE_BACKEND_URL}/dislike_recipe` : `${import.meta.env.VITE_BACKEND_URL}/like_recipe`;
+  
+      // Use Axios to send POST request
+      axios.post(url, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true, // If needed, include credentials (cookies) with the request
       })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          setLiked(!liked);
-          setLoading(false);
+        .then(response => {
+          console.log(response.data); // Handle successful response
+          setLiked(!liked); // Toggle the like/dislike state
+          setLoading(false); // Reset loading state
         })
         .catch(error => {
-          console.error('Error:', error);
-          setLoading(false);
+          console.error('Error:', error); // Handle error response
+          setLoading(false); // Reset loading state in case of error
         });
     }
   };
-
   return (
     <div className="w-full max-w-md mx-auto bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 mb-6">
     {/* Image Section */}
