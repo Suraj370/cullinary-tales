@@ -1,4 +1,5 @@
-#Cullinary Tales
+## Cullinary Tales
+
 Cullinary Tales is an innovative culinary technology solution that revolutionizes home cooking through intelligent recipe generation and ingredient-based exploration. By leveraging advanced technological infrastructure, the platform provides users with a seamless, personalized cooking experience tailored to individual preferences and pantry contents.
 ![image](https://github.com/user-attachments/assets/8433b91a-84b8-499c-a803-eff9550cfc13)
 
