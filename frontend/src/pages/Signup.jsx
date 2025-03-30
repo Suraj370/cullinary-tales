@@ -27,7 +27,7 @@ const Signup = () => {
     <div className="bg-gray-100 flex items-center justify-center min-h-screen">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="text-center mb-6">
-          <h1 className="text-3xl text-orange-400 font-bold text-gray-800">
+          <h1 className="text-3xl text-orange-400 font-bold ">
             Culinary Tales
           </h1>
           <p className="text-gray-600">Sign up to explore delicious stories</p>
